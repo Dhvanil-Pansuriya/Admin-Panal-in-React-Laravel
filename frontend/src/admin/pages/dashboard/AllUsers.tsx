@@ -1,0 +1,420 @@
+"use client"
+
+import { Edit, Trash2, ChevronUp, ChevronDown, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import type React from "react"
+import { useEffect, useState, useMemo } from "react"
+import axios from "axios"
+import ConfirmationModal from "../../utils/ConfirmationModal"
+import EditModal from "../../utils/EditModal"
+
+interface User {
+  id: number
+  name: string
+  email: string
+  email_verified_at: string | null
+  created_at: string
+  updated_at: string
+  role: number
+}
+
+type SortKey = "name" | "email"
+
+const AllUsers: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([])
+  const [showPopup, setShowPopup] = useState(false)
+  const [deletedUser, setDeletedUser] = useState<{ name: string; email: string } | null>(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: "ascending" | "descending" } | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [usersPerPage] = useState(10)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [userToDelete, setUserToDelete] = useState<number | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [userToEdit, setUserToEdit] = useState<User | null>(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken")
+
+    if (!token) {
+      setError("No authentication token found. Please log in.")
+      setLoading(false)
+      return
+    }
+
+    axios
+      .get(`${import.meta.env.VITE_SERVER_ADMIN_API}/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        if (response.data.success) {
+          setUsers(response.data.data.users)
+        } else {
+          setError("Failed to fetch users: Invalid response format")
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error)
+        setError("Failed to fetch users. Please check your permissions and try again.")
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [])
+
+  const openEditModal = (user: User) => {
+    setUserToEdit(user)
+    setIsEditModalOpen(true)
+  }
+
+  // Close Edit Modal
+  const closeEditModal = () => {
+    setIsEditModalOpen(false)
+    setUserToEdit(null)
+  }
+
+  const handleUpdate = async (updatedUser: {
+    name: string
+    email: string
+    role: number
+    password?: string
+    password_confirmation?: string
+  }) => {
+    const token = localStorage.getItem("authToken")
+    if (!token) {
+      setError("No authentication token found. Please log in.")
+      return
+    }
+
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_SERVER_ADMIN_API}/user/${userToEdit?.id}`, updatedUser, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.data.success) {
+        setUsers((prevUsers) => prevUsers.map((user) => (user.id === userToEdit?.id ? response.data.data.user : user)))
+        setShowPopup(true)
+        setTimeout(() => {
+          setShowPopup(false)
+        }, 3000)
+      }
+    } catch (error) {
+      console.error("Error updating user:", error)
+      setError("Failed to update user. Please check your permissions and try again.")
+    }
+  }
+
+  const openDeleteModal = (id: number) => {
+    setUserToDelete(id)
+    setIsDeleteModalOpen(true)
+  }
+
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false)
+    setUserToDelete(null)
+  }
+
+  const handleDelete = (id: number) => {
+    const token = localStorage.getItem("authToken")
+
+    if (!token) {
+      setError("No authentication token found. Please log in.")
+      return
+    }
+
+    axios
+      .delete(`${import.meta.env.VITE_SERVER_ADMIN_API}/user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        const userToDelete = users.find((user) => user.id === id)
+        if (userToDelete) {
+          setDeletedUser({ name: userToDelete.name, email: userToDelete.email })
+          setUsers(users.filter((user) => user.id !== id))
+          setShowPopup(true)
+          setIsDeleteModalOpen(false)
+          setTimeout(() => {
+            setShowPopup(false)
+          }, 3000)
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error)
+        setError("Failed to delete user. Please check your permissions and try again.")
+      })
+  }
+
+  const handleSort = (key: SortKey) => {
+    let direction: "ascending" | "descending" = "ascending"
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending"
+    }
+    setSortConfig({ key, direction })
+  }
+
+  const sortedUsers = useMemo(() => {
+    const sortableUsers = [...users]
+    if (sortConfig !== null) {
+      sortableUsers.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === "ascending" ? -1 : 1
+        if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === "ascending" ? 1 : -1
+        return 0
+      })
+    }
+    return sortableUsers
+  }, [users, sortConfig])
+
+  const filteredUsers = useMemo(() => {
+    return sortedUsers.filter(
+      (user) =>
+        user.id.toString().includes(searchTerm.toLowerCase()) ||
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+  }, [sortedUsers, searchTerm])
+
+  const indexOfLastUser = currentPage * usersPerPage
+  const indexOfFirstUser = indexOfLastUser - usersPerPage
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1)
+    }
+  }
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-6">Loading users...</div>
+  }
+
+  if (error) {
+    return <div className="text-center py-6 text-red-500">{error}</div>
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold text-gray-900">All Users</h1>
+      </div>
+      <div className="flex items-center justify-between">
+        <input
+          type="text"
+          placeholder="Search users..."
+          className="px-4 py-2 border border-gray-300 rounded-md focus:ring-gray-500 focus:border-gray-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:cursor-not-allowed">
+          Add User
+        </button>
+      </div>
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                {[
+                  { label: "ID", key: "id" },
+                  { label: "Name", key: "name" },
+                  { label: "Email", key: null },
+                  { label: "Role", key: null },
+                  { label: "Created", key: null },
+                  { label: "Updated", key: null },
+                  { label: "Actions", key: null },
+                ].map((column) => (
+                  <th
+                    key={column.label}
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    onClick={() => column.key && handleSort(column.key as SortKey)}
+                  >
+                    <div className="flex items-center gap-3">
+                      {column.label}
+                      {column.key && (
+                        <>
+                          {sortConfig?.key === column.key &&
+                            (sortConfig.direction === "ascending" ? (
+                              <ChevronUp size={16} />
+                            ) : (
+                              <ChevronDown size={16} />
+                            ))}
+                          {sortConfig?.key !== column.key && <ChevronDown size={16} />}
+                        </>
+                      )}
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {currentUsers.map((user) => (
+                <tr key={user.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{user.id}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{user.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{user.role == 0 && "User"}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">
+                      {new Date(user.created_at).toLocaleString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">
+                      {new Date(user.updated_at).toLocaleString("en-US", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button
+                      className="text-red-800 hover:text-red-700 mx-1"
+                      onClick={() => openDeleteModal(user.id)} // Open the modal with the user ID
+                    >
+                      <Trash2 size={20} className="inline-block" />
+                    </button>
+                    <button className="text-gray-600 hover:text-gray-900 mx-1" onClick={() => openEditModal(user)}>
+                      <Edit size={20} className="inline-block" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+          <div className="flex-1 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-700">
+                Showing <span className="font-medium">{indexOfFirstUser + 1}</span> to{" "}
+                <span className="font-medium">{Math.min(indexOfLastUser, filteredUsers.length)}</span> of{" "}
+                <span className="font-medium">{filteredUsers.length}</span> results
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter((page) => {
+                  const shouldShow = page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1
+                  return shouldShow
+                })
+                .map((page, index, array) => {
+                  if (index > 0 && array[index - 1] !== page - 1) {
+                    return [
+                      <span key={`ellipsis-${page}`} className="px-3 py-2">
+                        ...
+                      </span>,
+                      <button
+                        key={page}
+                        onClick={() => paginate(page)}
+                        className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
+                          currentPage === page
+                            ? "z-10 bg-gray-600 text-white"
+                            : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {page}
+                      </button>,
+                    ]
+                  }
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => paginate(page)}
+                      className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
+                        currentPage === page ? "z-10 bg-gray-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                })}
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
+                  currentPage === totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+          {/* Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={isDeleteModalOpen}
+            onClose={closeDeleteModal}
+            onConfirm={() => userToDelete !== null && handleDelete(userToDelete)} // Pass the user ID to handleDelete
+            title="Confirm Deletion"
+            message="Are you sure you want to delete this user? This action cannot be undone."
+          />
+          {/* Edit modal */}
+          <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} onSave={handleUpdate} user={userToEdit} />
+        </div>
+      </div>
+
+      {showPopup && deletedUser && (
+        <div className="fixed bottom-4 right-4 animate-fade-in">
+          <div className="bg-gray-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 opacity-90">
+            <CheckCircle size={20} className="text-white" />
+            <span>
+              User <strong>{deletedUser.name}</strong> deleted successfully!
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default AllUsers
