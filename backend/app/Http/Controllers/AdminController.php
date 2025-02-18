@@ -42,6 +42,27 @@ class AdminController extends ApiController
     }
 
 
+    public function addUser(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+            'role' => 'required|integer',
+        ]);
+
+        // Create a new user
+        $user = new User();
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+        $user->password = bcrypt($validatedData['password']);
+        $user->role = $validatedData['role'];
+        $user->save();
+
+        return $this->successResponse(["user" => $user], "User created successfully", 201);
+    }
+
     public function updateUser(Request $request, $id)
     {
         // Find the user by ID
