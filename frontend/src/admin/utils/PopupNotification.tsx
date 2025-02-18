@@ -43,7 +43,7 @@ const PopupNotification: React.FC<PopupNotificationProps> = ({
           exit={{ opacity: 0, y: 20 }} // Animate out
           transition={{ duration: 0.3, ease: 'easeInOut' }} // Smooth transition
         >
-          <div className="bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-4 opacity-95 ">
+          <div className="bg-gray-800 text-white px-6 py-3 rounded-sm shadow-lg flex items-center space-x-4 opacity-95 ">
             <CheckCircle className="h-6 w-6 text-green-400" /> {/* Lucide icon */}
             <span className="flex-1">
               {deletedUser ? `User ${deletedUser.name} deleted successfully!` : updateMessage}

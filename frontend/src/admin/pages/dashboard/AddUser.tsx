@@ -114,7 +114,6 @@ const AddUser: React.FC = () => {
                 },
             });
             setMessage({ text: 'User created successfully!', type: 'success' });
-            console.log('User created:', response.data.user);
             setFormData({
                 name: '',
                 email: '',
@@ -133,14 +132,13 @@ const AddUser: React.FC = () => {
                     type: 'error'
                 });
             }
-            console.error('There was an error creating the user!', error);
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const inputClasses = (error?: string) => `
-        w-full px-4 py-2 transition-all duration-300 border rounded-md 
+        w-full px-4 py-2 transition-all duration-300 border rounded-sm 
         focus:ring-2 focus:ring-gray-400 focus:border-transparent outline-none 
         hover:border-gray-300 bg-white
         ${error ? 'border-red-500 focus:ring-red-200' : 'border-gray-300'}
@@ -157,7 +155,7 @@ const AddUser: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-white shadow rounded-lg">
+            <div className="bg-white shadow rounded-sm">
                 <div className="px-4 py-5 sm:p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 gap-6">
@@ -239,7 +237,7 @@ const AddUser: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className={`px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-300 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                                className={`px-4 py-2 border border-transparent rounded-sm shadow-sm text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-300 ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
                                     }`}
                             >
                                 {isSubmitting ? (
@@ -258,7 +256,7 @@ const AddUser: React.FC = () => {
                     </form>
 
                     {message && (
-                        <div className={`mt-6 p-4 rounded-md transition-all duration-500 ease-in-out animate-slideIn ${message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
+                        <div className={`mt-6 p-4 rounded-sm transition-all duration-500 ease-in-out animate-slideIn ${message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
                             }`}>
                             <div className="flex items-center">
                                 {message.type === 'success' ? (

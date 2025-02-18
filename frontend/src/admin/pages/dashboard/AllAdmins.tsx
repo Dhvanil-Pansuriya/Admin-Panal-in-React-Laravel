@@ -175,17 +175,17 @@ const AllAdmins: React.FC = () => {
         <input
           type="text"
           placeholder="Search users..."
-          className=" px-4 py-2 border border-gray-300 rounded-md focus:ring-gray-500 focus:border-gray-500"
+          className=" px-4 py-2 border border-gray-300 rounded-sm focus:ring-gray-500 focus:border-gray-500"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
+        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
           onClick={() => navigate("/dashboard/adduser")}
         >
           Add User
         </button>
       </div>
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -279,7 +279,7 @@ const AllAdmins: React.FC = () => {
               <button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === 1
+                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-sm ${currentPage === 1
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-white text-gray-700 hover:bg-gray-50"
                   }`}
@@ -303,7 +303,7 @@ const AllAdmins: React.FC = () => {
                       <button
                         key={page}
                         onClick={() => paginate(page)}
-                        className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === page
+                        className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-sm ${currentPage === page
                           ? "z-10 bg-gray-600 text-white"
                           : "bg-white text-gray-700 hover:bg-gray-50"
                           }`}
@@ -316,7 +316,7 @@ const AllAdmins: React.FC = () => {
                     <button
                       key={page}
                       onClick={() => paginate(page)}
-                      className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === page
+                      className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-sm ${currentPage === page
                         ? "z-10 bg-gray-600 text-white"
                         : "bg-white text-gray-700 hover:bg-gray-50"
                         }`}
@@ -328,7 +328,7 @@ const AllAdmins: React.FC = () => {
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === totalPages
+                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-sm ${currentPage === totalPages
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-white text-gray-700 hover:bg-gray-50"
                   }`}

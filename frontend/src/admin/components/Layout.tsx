@@ -48,7 +48,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span className="text-xl font-semibold">Dashboard</span>
             <button
               onClick={toggleSidebar}
-              className="p-2 rounded-md hover:bg-gray-100"
+              className="p-2 rounded-sm hover:bg-gray-100"
             >
               <X className="w-6 h-6" />
             </button>
@@ -58,7 +58,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`flex items-center px-4 py-2 rounded-md ${location.pathname === item.href
+                className={`flex items-center px-4 py-2 rounded-sm ${location.pathname === item.href
                   ? 'bg-gray-400 text-gray-900'
                   : 'text-gray-700 hover:bg-gray-100'
                   }`}
@@ -83,7 +83,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
             <button
               onClick={toggleDesktopSidebar}
-              className={`p-2 rounded-md hover:bg-gray-100 ${isDesktopSidebarCollapsed ? 'mx-auto ' : 'ml-auto'
+              className={`p-2 rounded-sm hover:bg-gray-100 ${isDesktopSidebarCollapsed ? 'mx-auto ' : 'ml-auto'
                 }`}
             >
               {isDesktopSidebarCollapsed ? (
@@ -98,7 +98,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`flex items-center rounded-md ${location.pathname === item.href
+                className={`flex items-center rounded-sm ${location.pathname === item.href
                   ? 'bg-gray-400 text-gray-900'
                   : 'text-gray-700 hover:bg-gray-100'
                   } ${isDesktopSidebarCollapsed ? 'justify-center py-2 ' : '  px-4 py-2 '}`}

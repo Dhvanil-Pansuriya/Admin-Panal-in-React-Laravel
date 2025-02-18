@@ -78,15 +78,15 @@ const DashboardHome: React.FC = () => {
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-gray-900">Dashboard Overview</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-sm shadow">
           <Link to="/dashboard/allusers" className="text-lg font-medium text-gray-900">Total Users</Link>
           <p className="mt-2 text-3xl font-bold text-gray-600">{totalUsers}</p>
         </div> 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-sm shadow">
           <Link to="/dashboard/alladmins" className="text-lg font-medium text-gray-900">Total Admins</Link>
           <p className="mt-2 text-3xl font-bold text-gray-600">{totalAdmins}</p>
         </div> 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-sm shadow">
           <h2 className="text-lg font-medium text-gray-900">Total Admins + Users</h2>
           <p className="mt-2 text-3xl font-bold text-gray-600">{totalAdminsAndUsers}</p>
         </div>

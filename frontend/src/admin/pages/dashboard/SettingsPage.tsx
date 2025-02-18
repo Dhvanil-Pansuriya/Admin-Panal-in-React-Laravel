@@ -8,7 +8,7 @@ const SettingsPage: React.FC = () => {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        <p className="text-xl text-gray-600 bg-white p-8 rounded-lg shadow-md">
+        <p className="text-xl text-gray-600 bg-white p-8 rounded-sm shadow-md">
           User data not found. Please log in again.
         </p>
       </div>
@@ -19,7 +19,7 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
-      <div className="bg-white shadow rounded-lg divide-y divide-gray-200">
+      <div className="bg-white shadow rounded-sm divide-y divide-gray-200">
         <div className="px-4 py-5 sm:p-6">
           <h2 className="text-lg font-medium text-gray-900">Account Settings</h2>
           <div className="mt-6 space-y-6">
@@ -31,7 +31,7 @@ const SettingsPage: React.FC = () => {
                 type="email"
                 name="email"
                 id="email"
-                className="mt-1 block w-full rounded-md py-2 px-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm py-2 px-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 defaultValue={user.email}
               />
             </div>
@@ -43,7 +43,7 @@ const SettingsPage: React.FC = () => {
                 type="text"
                 name="name"
                 id="name"
-                className="mt-1 block w-full rounded-md py-2 px-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="mt-1 block w-full rounded-sm py-2 px-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 defaultValue={user.name}
               />
             </div>

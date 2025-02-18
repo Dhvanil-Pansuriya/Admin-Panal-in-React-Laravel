@@ -83,7 +83,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
         >
           <motion.div
             ref={modalRef}
-            className="bg-white rounded-lg p-6 w-full max-w-md"
+            className="bg-white rounded-sm p-6 w-full max-w-md"
             initial={{ y: 20, opacity: 0 }} // Initial state (hidden)
             animate={{ y: 0, opacity: 1 }} // Animate in
             exit={{ y: 20, opacity: 0 }} // Animate out
@@ -114,7 +114,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -128,7 +128,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -136,13 +136,13 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Save
                 </button>
