@@ -108,7 +108,7 @@ const AddUser: React.FC = () => {
         setIsSubmitting(true);
 
         try {
-            const response = await axios.post(`${import.meta.env.VITE_SERVER_ADMIN_API}/user`, formData, {
+            await axios.post(`${import.meta.env.VITE_SERVER_ADMIN_API}/user`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -145,6 +145,10 @@ const AddUser: React.FC = () => {
     `;
     const labelClasses = "block text-sm font-medium text-gray-700 mb-1";
     const errorClasses = "mt-1 text-sm text-red-600";
+
+    if (error) {
+        return <div className="text-center py-6 text-red-500">{error}</div>
+    }
 
     return (
         <div className="space-y-6">
