@@ -182,7 +182,7 @@ const AllAdmins: React.FC = () => {
         <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
           onClick={() => navigate("/dashboard/adduser")}
         >
-          Add User
+          Add Admin
         </button>
       </div>
       <div className="bg-white shadow rounded-sm overflow-hidden">

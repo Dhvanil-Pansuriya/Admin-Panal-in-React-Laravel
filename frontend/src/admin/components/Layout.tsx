@@ -19,8 +19,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'All Admins', href: '/dashboard/alladmins', icon: Shield },
     { name: 'Add Admin/User', href: '/dashboard/adduser', icon: Plus },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+    { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
   ];
-  // { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
 
 
 
