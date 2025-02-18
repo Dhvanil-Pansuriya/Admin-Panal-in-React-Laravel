@@ -1,11 +1,13 @@
 "use client"
 
-import { Edit, Trash2, ChevronUp, ChevronDown, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
 import type React from "react"
 import { useEffect, useState, useMemo } from "react"
 import axios from "axios"
 import ConfirmationModal from "../../utils/ConfirmationModal"
 import EditModal from "../../utils/EditModal"
+import { formatDistanceToNow } from "date-fns";
+import PopupNotification from "../../utils/PopupNotification"
 
 interface User {
   id: number
@@ -33,6 +35,7 @@ const AllUsers: React.FC = () => {
   const [userToDelete, setUserToDelete] = useState<number | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
+  const [updateMessage, setUpdateMessage] = useState<string | null>(null)
 
   useEffect(() => {
     const token = localStorage.getItem("authToken")
@@ -76,13 +79,7 @@ const AllUsers: React.FC = () => {
     setUserToEdit(null)
   }
 
-  const handleUpdate = async (updatedUser: {
-    name: string
-    email: string
-    role: number
-    password?: string
-    password_confirmation?: string
-  }) => {
+  const handleUpdate = async (updatedUser: Partial<User>) => {
     const token = localStorage.getItem("authToken")
     if (!token) {
       setError("No authentication token found. Please log in.")
@@ -97,11 +94,16 @@ const AllUsers: React.FC = () => {
       })
 
       if (response.data.success) {
-        setUsers((prevUsers) => prevUsers.map((user) => (user.id === userToEdit?.id ? response.data.data.user : user)))
+        setUsers((prevUsers) =>
+          prevUsers.map((user) => (user.id === userToEdit?.id ? { ...user, ...response.data.data.user } : user)),
+        )
+        setUpdateMessage(`User ${updatedUser.name} updated successfully!`)
         setShowPopup(true)
         setTimeout(() => {
           setShowPopup(false)
+          setUpdateMessage(null)
         }, 3000)
+        closeEditModal()
       }
     } catch (error) {
       console.error("Error updating user:", error)
@@ -171,7 +173,7 @@ const AllUsers: React.FC = () => {
     return sortableUsers
   }, [users, sortConfig])
 
-  const filteredUsers = useMemo(() => {
+  const filtegrayUsers = useMemo(() => {
     return sortedUsers.filter(
       (user) =>
         user.id.toString().includes(searchTerm.toLowerCase()) ||
@@ -182,8 +184,8 @@ const AllUsers: React.FC = () => {
 
   const indexOfLastUser = currentPage * usersPerPage
   const indexOfFirstUser = indexOfLastUser - usersPerPage
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser)
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
+  const currentUsers = filtegrayUsers.slice(indexOfFirstUser, indexOfLastUser)
+  const totalPages = Math.ceil(filtegrayUsers.length / usersPerPage)
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
 
@@ -204,7 +206,7 @@ const AllUsers: React.FC = () => {
   }
 
   if (error) {
-    return <div className="text-center py-6 text-red-500">{error}</div>
+    return <div className="text-center py-6 text-gray-500">{error}</div>
   }
 
   return (
@@ -246,15 +248,20 @@ const AllUsers: React.FC = () => {
                     <div className="flex items-center gap-3">
                       {column.label}
                       {column.key && (
-                        <>
-                          {sortConfig?.key === column.key &&
-                            (sortConfig.direction === "ascending" ? (
-                              <ChevronUp size={16} />
-                            ) : (
-                              <ChevronDown size={16} />
-                            ))}
-                          {sortConfig?.key !== column.key && <ChevronDown size={16} />}
-                        </>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+                          />
+                        </svg>
                       )}
                     </div>
                   </th>
@@ -278,38 +285,19 @@ const AllUsers: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
-                      {new Date(user.created_at).toLocaleString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
+                      {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
-                      {new Date(user.updated_at).toLocaleString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
+                      {formatDistanceToNow(new Date(user.updated_at), { addSuffix: true })}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button
-                      className="text-red-800 hover:text-red-700 mx-1"
-                      onClick={() => openDeleteModal(user.id)} // Open the modal with the user ID
-                    >
+                    <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openDeleteModal(user.id)}>
                       <Trash2 size={20} className="inline-block" />
                     </button>
-                    <button className="text-gray-600 hover:text-gray-900 mx-1" onClick={() => openEditModal(user)}>
+                    <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openEditModal(user)}>
                       <Edit size={20} className="inline-block" />
                     </button>
                   </td>
@@ -325,19 +313,18 @@ const AllUsers: React.FC = () => {
             <div>
               <p className="text-sm text-gray-700">
                 Showing <span className="font-medium">{indexOfFirstUser + 1}</span> to{" "}
-                <span className="font-medium">{Math.min(indexOfLastUser, filteredUsers.length)}</span> of{" "}
-                <span className="font-medium">{filteredUsers.length}</span> results
+                <span className="font-medium">{Math.min(indexOfLastUser, filtegrayUsers.length)}</span> of{" "}
+                <span className="font-medium">{filtegrayUsers.length}</span> results
               </p>
             </div>
             <div className="flex items-center space-x-2">
               <button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
-                  currentPage === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
+                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
               >
                 <ChevronLeft size={16} />
               </button>
@@ -355,11 +342,10 @@ const AllUsers: React.FC = () => {
                       <button
                         key={page}
                         onClick={() => paginate(page)}
-                        className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
-                          currentPage === page
-                            ? "z-10 bg-gray-600 text-white"
-                            : "bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
+                        className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === page
+                          ? "z-10 bg-gray-600 text-white"
+                          : "bg-white text-gray-700 hover:bg-gray-50"
+                          }`}
                       >
                         {page}
                       </button>,
@@ -369,9 +355,8 @@ const AllUsers: React.FC = () => {
                     <button
                       key={page}
                       onClick={() => paginate(page)}
-                      className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
-                        currentPage === page ? "z-10 bg-gray-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
-                      }`}
+                      className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === page ? "z-10 bg-gray-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
                     >
                       {page}
                     </button>
@@ -380,11 +365,10 @@ const AllUsers: React.FC = () => {
               <button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
-                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${
-                  currentPage === totalPages
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
+                className={`relative inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md ${currentPage === totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
               >
                 <ChevronRight size={16} />
               </button>
@@ -394,7 +378,7 @@ const AllUsers: React.FC = () => {
           <ConfirmationModal
             isOpen={isDeleteModalOpen}
             onClose={closeDeleteModal}
-            onConfirm={() => userToDelete !== null && handleDelete(userToDelete)} // Pass the user ID to handleDelete
+            onConfirm={() => userToDelete !== null && handleDelete(userToDelete)}
             title="Confirm Deletion"
             message="Are you sure you want to delete this user? This action cannot be undone."
           />
@@ -403,18 +387,15 @@ const AllUsers: React.FC = () => {
         </div>
       </div>
 
-      {showPopup && deletedUser && (
-        <div className="fixed bottom-4 right-4 animate-fade-in">
-          <div className="bg-gray-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-2 opacity-90">
-            <CheckCircle size={20} className="text-white" />
-            <span>
-              User <strong>{deletedUser.name}</strong> deleted successfully!
-            </span>
-          </div>
-        </div>
-      )}
+      <PopupNotification
+        showPopup={showPopup}
+        deletedUser={deletedUser}
+        updateMessage={updateMessage}
+        onClose={() => setShowPopup(false)}
+      />
     </div>
   )
 }
 
 export default AllUsers
+

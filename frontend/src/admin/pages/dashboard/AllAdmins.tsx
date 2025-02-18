@@ -1,7 +1,10 @@
-import { Edit, ChevronUp, ChevronDown, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { Edit, ChevronLeft, ChevronRight } from "lucide-react"
 import type React from "react"
 import { useEffect, useState, useMemo } from "react"
 import axios from "axios"
+import { formatDistanceToNow } from "date-fns"
+import EditModal from "../../utils/EditModal"
+import PopupNotification from "../../utils/PopupNotification"
 
 interface User {
   id: number
@@ -23,6 +26,12 @@ const AllAdmins: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [adminsPerPage] = useState(10)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [userToEdit, setUserToEdit] = useState<User | null>(null)
+  const [updateMessage, setUpdateMessage] = useState<string | null>(null)
+  const [showPopup, setShowPopup] = useState(false)
+
+
 
   useEffect(() => {
     const token = localStorage.getItem("authToken")
@@ -104,6 +113,49 @@ const AllAdmins: React.FC = () => {
     }
   }
 
+  const openEditModal = (user: User) => {
+    setUserToEdit(user)
+    setIsEditModalOpen(true)
+  }
+
+  // Close Edit Modal
+  const closeEditModal = () => {
+    setIsEditModalOpen(false)
+    setUserToEdit(null)
+  }
+
+  const handleUpdate = async (updatedUser: Partial<User>) => {
+    const token = localStorage.getItem("authToken")
+    if (!token) {
+      setError("No authentication token found. Please log in.")
+      return
+    }
+
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_SERVER_ADMIN_API}/user/${userToEdit?.id}`, updatedUser, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (response.data.success) {
+        setAdmins((prevUsers) =>
+          prevUsers.map((user) => (user.id === userToEdit?.id ? { ...user, ...response.data.data.user } : user)),
+        )
+        setUpdateMessage(`Admin ${updatedUser.name} updated successfully!`)
+        setShowPopup(true)
+        setTimeout(() => {
+          setShowPopup(false)
+          setUpdateMessage(null)
+        }, 3000)
+        closeEditModal()
+      }
+    } catch (error) {
+      console.error("Error updating user:", error)
+      setError("Failed to update user. Please check your permissions and try again.")
+    }
+  }
+
   if (loading) {
     return <div className="text-center py-6">Loading admins...</div>
   }
@@ -151,16 +203,22 @@ const AllAdmins: React.FC = () => {
                   >
                     <div className="flex items-center gap-3">
                       {column.label}
-                      {
-                        column.key && (
-                          <>
-                            {sortConfig?.key === column.key &&
-                              (sortConfig.direction === "ascending" ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
-                            {sortConfig?.key !== column.key && <ChevronDown size={16} />}
-
-                          </>
-                        )
-                      }
+                      {column.key && (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+                          />
+                        </svg>
+                      )}
                     </div>
                   </th>
                 ))}
@@ -183,32 +241,16 @@ const AllAdmins: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
-                      {new Date(user.created_at).toLocaleString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true
-                      })}
+                      {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
-                      {new Date(user.updated_at).toLocaleString("en-US", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true
-                      })}
+                      {formatDistanceToNow(new Date(user.updated_at), { addSuffix: true })}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-gray-600 hover:text-gray-900 mx-1 hover:cursor-not-allowed">
+                    <button className="text-gray-600 hover:text-gray-900 mx-1" onClick={() => openEditModal(user)}>
                       <Edit size={20} className="inline-block" />
                     </button>
                   </td>
@@ -293,6 +335,12 @@ const AllAdmins: React.FC = () => {
             </div>
           </div>
         </div>
+        <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} onSave={handleUpdate} user={userToEdit} />
+        <PopupNotification
+          showPopup={showPopup}
+          updateMessage={updateMessage}
+          onClose={() => setShowPopup(false)}
+        />
       </div>
     </div>
   )
