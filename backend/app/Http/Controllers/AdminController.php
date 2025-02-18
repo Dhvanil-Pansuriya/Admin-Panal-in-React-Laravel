@@ -83,7 +83,7 @@ class AdminController extends ApiController
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
-            'role' => 'required|integer',
+            'role' => 'nullable|integer',
         ]);
 
         // Update the user details

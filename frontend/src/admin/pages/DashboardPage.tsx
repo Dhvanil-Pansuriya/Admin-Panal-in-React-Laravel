@@ -29,7 +29,7 @@ const DashboardPage: React.FC = () => {
           setIsAdmin(false);
         }
       } catch (error) {
-        setIsAdmin(false);
+        setIsAdmin(false);  
       }
     };
 
