@@ -5,6 +5,7 @@ import axios from "axios"
 import { formatDistanceToNow } from "date-fns"
 import EditModal from "../../utils/EditModal"
 import PopupNotification from "../../utils/PopupNotification"
+import { useNavigate } from "react-router-dom"
 
 interface User {
   id: number
@@ -31,7 +32,7 @@ const AllAdmins: React.FC = () => {
   const [updateMessage, setUpdateMessage] = useState<string | null>(null)
   const [showPopup, setShowPopup] = useState(false)
 
-
+  const navigate = useNavigate()
 
   useEffect(() => {
     const token = localStorage.getItem("authToken")
@@ -178,7 +179,9 @@ const AllAdmins: React.FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 hover:cursor-not-allowed">
+        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 "
+          onClick={() => navigate("/dashboard/adduser")}
+        >
           Add User
         </button>
       </div>

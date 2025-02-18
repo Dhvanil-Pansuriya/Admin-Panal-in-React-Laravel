@@ -10,6 +10,7 @@ import AllUsers from './admin/pages/dashboard/AllUsers';
 import AllAdmins from './admin/pages/dashboard/AllAdmins';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Home from './user/Home';
+import AddUser from './admin/pages/dashboard/AddUser';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const App: React.FC = () => {
             <Route path="reports" element={<ReportsPage />} />
             <Route path="allusers" element={<AllUsers />} />
             <Route path="alladmins" element={<AllAdmins />} />
+            <Route path="adduser" element={<AddUser />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" />} />

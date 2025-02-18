@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, Settings, Users, BarChart3, UserCircle, ChevronLeft, ChevronRight,  Shield } from 'lucide-react';
+import { Menu, X, Home, Settings, Users, BarChart3, UserCircle, ChevronLeft, ChevronRight,  Shield, Plus } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 
 interface LayoutProps {
@@ -18,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Reports', href: '/dashboard/reports', icon: BarChart3 },
     { name: 'All Users', href: '/dashboard/allusers', icon: Users },
     { name: 'All Admins', href: '/dashboard/alladmins', icon: Shield },
+    { name: 'Add Admin/User', href: '/dashboard/adduser', icon: Plus },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
 

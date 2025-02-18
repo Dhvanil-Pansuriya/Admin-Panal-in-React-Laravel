@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum', AdminMiddleware::class])->prefix('admin')->gr
     Route::get('/totalUsers', [AdminController::class, 'getTotalUsers'])->name('totalUsers');
     Route::get('/totalAdmins', [AdminController::class, 'getTotalAdmins'])->name('totalAdmins');
     Route::get('/totalAdminsAndUsers', [AdminController::class, 'getTotalAdminsAndUsers'])->name('totalAdminsAndUsers');
-    Route::put('/user/{id}', [AdminController::class, 'updateUser'])->name('updateUser')->name('updateUser');
+    Route::put('/user/{id}', [AdminController::class, 'updateUser'])->name('updateUser');
     Route::post('/user', [AdminController::class, 'addUser'])->name('addUser');
 });
 

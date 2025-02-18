@@ -44,6 +44,9 @@ class AdminController extends ApiController
 
     public function addUser(Request $request)
     {
+        if (User::where('email', $request->email)->exists()) {
+            return $this->errorResponse("Email already exists", 400);
+        }
         // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -62,6 +65,8 @@ class AdminController extends ApiController
 
         return $this->successResponse(["user" => $user], "User created successfully", 201);
     }
+    // Check if the email already exists
+
 
     public function updateUser(Request $request, $id)
     {
