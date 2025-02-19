@@ -17,12 +17,24 @@ Route::middleware(['auth:sanctum', AdminMiddleware::class])->prefix('admin')->gr
     Route::get('/', function (Request $request) {
         return $request->user();
     });
+
+    // get all users
     Route::get('/users', [AdminController::class, 'getAllUsers'])->name('allUsers');
+    // get all admins
+    Route::get('/admins', [AdminController::class, 'getAllAdmins'])->name('allAdmins');
+    // get all admins and users
+    Route::get('/adminsAndUsers', [AdminController::class, 'getAllAdminsAndUsers'])->name('allAdminsAndUsers');
+    // delete user by id
     Route::delete('/user/{id}', [AdminController::class, 'deleteUserById'])->name('deleteUser');
+    // get total users (integer)
     Route::get('/totalUsers', [AdminController::class, 'getTotalUsers'])->name('totalUsers');
+    // get total admins (integer)
     Route::get('/totalAdmins', [AdminController::class, 'getTotalAdmins'])->name('totalAdmins');
+    // get total admins and users (integer)
     Route::get('/totalAdminsAndUsers', [AdminController::class, 'getTotalAdminsAndUsers'])->name('totalAdminsAndUsers');
+    // update user by id
     Route::put('/user/{id}', [AdminController::class, 'updateUser'])->name('updateUser');
+    // add user
     Route::post('/user', [AdminController::class, 'addUser'])->name('addUser');
 });
 

@@ -24,51 +24,19 @@ const AddUser: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null)
 
+    const NAME_CHAR_LIMIT = 225;
+    const EMAIL_CHAR_LIMIT = 225;
+    const PASSWORD_CHAR_LIMIT = 225;
 
     const validateForm = (): boolean => {
         const newErrors: ValidationErrors = {};
         let isValid = true;
 
-        // Name validation
-        if (!formData.name) {
-            newErrors.name = 'Name is required';
-            isValid = false;
-        } else if (formData.name.length > 255) {
-            newErrors.name = 'Name cannot exceed 255 characters';
-            isValid = false;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!formData.email) {
-            newErrors.email = 'Email is required';
-            isValid = false;
-        } else if (!emailRegex.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
-            isValid = false;
-        }
-
-        // Password validation
-        if (!formData.password) {
-            newErrors.password = 'Password is required';
-            isValid = false;
-        } else if (formData.password.length < 6) {
-            newErrors.password = 'Password must be at least 6 characters';
-            isValid = false;
-        }
-
-        // Password confirmation validation
         if (!formData.password_confirmation) {
             newErrors.password_confirmation = 'Please confirm your password';
             isValid = false;
         } else if (formData.password !== formData.password_confirmation) {
             newErrors.password_confirmation = 'Passwords do not match';
-            isValid = false;
-        }
-
-        // Role validation
-        if (formData.role === undefined || formData.role === null) {
-            newErrors.role = 'Role is required';
             isValid = false;
         }
 
@@ -173,7 +141,13 @@ const AddUser: React.FC = () => {
                                     onChange={handleChange}
                                     className={inputClasses(errors.name)}
                                     placeholder="Enter name"
+                                    maxLength={NAME_CHAR_LIMIT}
                                 />
+                                {
+                                    formData.name.length >= NAME_CHAR_LIMIT && (
+                                        <p className="mt-1 text-sm text-red-600">Name must be less than {NAME_CHAR_LIMIT} characters</p>
+                                    )
+                                }
                                 {errors.name && <p className={errorClasses}>{errors.name}</p>}
                             </div>
 
@@ -187,7 +161,13 @@ const AddUser: React.FC = () => {
                                     onChange={handleChange}
                                     className={inputClasses(errors.email)}
                                     placeholder="Enter email"
+                                    maxLength={EMAIL_CHAR_LIMIT}
                                 />
+                                {
+                                    formData.email.length >= EMAIL_CHAR_LIMIT && (
+                                        <p className="mt-1 text-sm text-red-600">Email must be less than {EMAIL_CHAR_LIMIT} characters</p>
+                                    )
+                                }
                                 {errors.email && <p className={errorClasses}>{errors.email}</p>}
                             </div>
 
@@ -201,7 +181,13 @@ const AddUser: React.FC = () => {
                                     onChange={handleChange}
                                     className={inputClasses(errors.password)}
                                     placeholder="Enter password"
+                                    maxLength={PASSWORD_CHAR_LIMIT}
                                 />
+                                {
+                                    formData.password.length >= PASSWORD_CHAR_LIMIT && (
+                                        <p className="mt-1 text-sm text-red-600">Password must be less than {PASSWORD_CHAR_LIMIT} characters</p>
+                                    )
+                                }
                                 {errors.password && <p className={errorClasses}>{errors.password}</p>}
                             </div>
 
@@ -215,7 +201,13 @@ const AddUser: React.FC = () => {
                                     onChange={handleChange}
                                     className={inputClasses(errors.password_confirmation)}
                                     placeholder="Confirm password"
+                                    maxLength={PASSWORD_CHAR_LIMIT}
                                 />
+                                {
+                                    formData.password_confirmation.length >= PASSWORD_CHAR_LIMIT && (
+                                        <p className="mt-1 text-sm text-red-600">Password must be less than {PASSWORD_CHAR_LIMIT} characters</p>
+                                    )
+                                }
                                 {errors.password_confirmation && (
                                     <p className={errorClasses}>{errors.password_confirmation}</p>
                                 )}

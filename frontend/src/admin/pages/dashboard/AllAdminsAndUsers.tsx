@@ -50,8 +50,8 @@ const AllUsers: React.FC = () => {
     }
 
     axios
-      .get(`${import.meta.env.VITE_SERVER_ADMIN_API}/users`, {
-        headers: {
+      .get(`${import.meta.env.VITE_SERVER_ADMIN_API}/adminsAndUsers`, {
+        headers: {    
           Authorization: `Bearer ${token}`,
         },
       })
@@ -215,7 +215,7 @@ const AllUsers: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-900">All Users</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">All Admins & Users</h1>
       </div>
       <div className="flex items-center justify-between">
         <input
@@ -279,24 +279,25 @@ const AllUsers: React.FC = () => {
                     <div className="text-sm font-medium text-gray-900">{user.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 w-32 overflow-hidden text-ellipsis whitespace-nowrap" title={user.name}>
-                      {user.name}
-                    </div>
+                    <div className="text-sm font-medium text-gray-900">{user.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500 w-40 overflow-hidden text-ellipsis whitespace-nowrap" title={user.email}>
-                      {user.email}
-                    </div>
+                    <div className="text-sm text-gray-500">{user.email}</div>
                   </td>
-                  {user.role === 1 ? (
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500 font-semibold">Admin</div>
-                    </td>
-                  ) : (
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">User</div>
-                    </td>
-                  )}
+                  {
+                    user.role == 1 ? (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500 font-semibold">Admin</div>
+                      </td>
+                    ) : (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">User</div>
+                      </td>
+                    )
+                  }
+                  {/* <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{user.role == 1 ? "Admin" : "User"}</div>
+                  </td> */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
                       {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
@@ -307,10 +308,12 @@ const AllUsers: React.FC = () => {
                       {formatDistanceToNow(new Date(user.updated_at), { addSuffix: true })}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {/* <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openDeleteModal(user.id)}>
+                      <Trash2 size={20} className="inline-block" />
+                    </button> */}
                     <button
-                      className={`text-gray-600 hover:text-gray-800 mx-1 ${user.role === 1 ? "cursor-not-allowed opacity-50" : ""
-                        }`}
+                      className={`text-gray-600 hover:text-gray-800 mx-1 ${user.role === 1 ? "cursor-not-allowed opacity-50" : ""}`}
                       onClick={() => user.role !== 1 && openDeleteModal(user.id)}
                       disabled={user.role === 1}
                     >
@@ -321,7 +324,6 @@ const AllUsers: React.FC = () => {
                     </button>
                   </td>
                 </tr>
-
               ))}
             </tbody>
           </table>
@@ -418,4 +420,3 @@ const AllUsers: React.FC = () => {
 }
 
 export default AllUsers
-

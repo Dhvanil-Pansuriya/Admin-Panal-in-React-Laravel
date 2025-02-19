@@ -37,7 +37,7 @@ const PopupNotification: React.FC<PopupNotificationProps> = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          className="fixed bottom-4 right-4"
+          className="fixed bottom-4 right-4 z-20"
           initial={{ opacity: 0, y: 20 }} // Initial state (hidden)
           animate={{ opacity: 1, y: 0 }} // Animate in
           exit={{ opacity: 0, y: 20 }} // Animate out

@@ -85,16 +85,18 @@ const DashboardHome: React.FC = () => {
             <p className="mt-2 text-3xl font-bold text-gray-600">{totalUsers}</p>
           </div>
         </Link>
-        <Link to="/dashboard/allusers" className="bg-white p-6 rounded-sm shadow block">
+        <Link to="/dashboard/alladmins" className="bg-white p-6 rounded-sm shadow block">
           <div>
             <h2 className="text-lg font-medium text-gray-900">Total Admins</h2>
             <p className="mt-2 text-3xl font-bold text-gray-600">{totalAdmins}</p>
           </div>
         </Link>
-        <div className="bg-white p-6 rounded-sm shadow">
+        <Link to="/dashboard/alladminsusers" className="bg-white p-6 rounded-sm shadow block">
+        <div>
           <h2 className="text-lg font-medium text-gray-900">Total Admins + Users</h2>
           <p className="mt-2 text-3xl font-bold text-gray-600">{totalAdminsAndUsers}</p>
         </div>
+        </Link>
       </div>
     </div>
 

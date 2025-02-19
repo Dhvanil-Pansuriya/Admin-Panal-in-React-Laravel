@@ -12,53 +12,6 @@ const LoginPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     setError(null);
-
-    //     try {
-    //         const response = await axios.post(`${import.meta.env.VITE_SERVER_API}/login`, {
-    //             email,
-    //             password,
-    //         });
-
-    //         if (response.data.success === true) {
-    //             const { token, user } = response.data.data;
-
-    //             localStorage.setItem('authToken', token);
-
-    //             dispatch(loginUser(user));
-
-    //             // Check if the user is an admin by making a request to /api/admin
-    //             try {
-    //                 const adminCheck = await axios.get(`${import.meta.env.VITE_SERVER_ADMIN_API}/admin`, {
-    //                     headers: {
-    //                         Authorization: `Bearer ${token}`,
-    //                     },
-    //                 });
-
-    //                 // If the response contains role 1, redirect to dashboard
-    //                 if (adminCheck.data.role === 1) {
-    //                     navigate('/dashboard');
-    //                 } else {
-    //                     navigate('/home');
-    //                 }
-    //             } catch (adminError) {
-    //                 // If the user is not an admin, redirect to home
-    //                 navigate('/home');
-    //             }
-    //         } else {
-    //             setError('Login failed. Please try again.');
-    //         }
-    //     } catch (err: any) {
-    //         if (err.response && err.response.data && err.response.data.message) {
-    //             setError(err.response.data.message);
-    //         } else {
-    //             setError('Something went wrong. Please try again later.');
-    //         }
-    //     }
-    // };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);

@@ -9,14 +9,25 @@ class AdminController extends ApiController
 {
     function getAllUsers()
     {
-        $users = User::get();
+        $users = User::where('role', '!=', 1)->get();
         return $this->successResponse(["users" => $users], "All users fetched successfully");
+    }
+
+    function getAllAdmins()
+    {
+        $admins = User::where('role', '!=', 0)->get();
+        return $this->successResponse(["admins" => $admins], "All admins fetched successfully");
+    }
+
+    function getAllAdminsAndUsers()
+    {
+        $users = User::get();
+        return $this->successResponse(["users" => $users], "All admins & users fetched successfully");
     }
 
     function getTotalUsers()
     {
         $total = User::where('role', '!=', 1)->count();
-
         return $this->successResponse(["totalUsers" => $total], "Total users counting done perfectly", 200);
     }
 
@@ -42,7 +53,7 @@ class AdminController extends ApiController
         // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email|unique:users|max:225',
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|integer',
         ]);

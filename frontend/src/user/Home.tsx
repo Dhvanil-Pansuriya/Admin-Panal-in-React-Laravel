@@ -11,8 +11,6 @@ const Home: React.FC = () => {
           Welcome to the home page. This is a protected route.
         </p>
       </div>
-      
-
     </div>
   );
 };

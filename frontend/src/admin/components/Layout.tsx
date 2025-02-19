@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     // { name: 'Profile', href: '/dashboard/profile', icon: UserCircle },
-    { name: 'All Users', href: '/dashboard/allusers', icon: Users },
+    { name: 'All Users', href: '/dashboard/alladminsusers', icon: Users },
     // { name: 'All Admins', href: '/dashboard/alladmins', icon: Shield },
     // { name: 'Add Admin/User', href: '/dashboard/adduser', icon: Plus },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
