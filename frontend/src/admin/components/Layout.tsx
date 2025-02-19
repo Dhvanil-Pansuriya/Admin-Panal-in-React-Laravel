@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Settings, Users, BarChart3, UserCircle, ChevronLeft, ChevronRight, Shield, Plus, LogOut } from 'lucide-react';
+import { Menu, X, Home, Settings, Users, BarChart3, UserCircle, ChevronLeft, ChevronRight, Shield, Plus } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import { useDispatch } from 'react-redux';
 import { logoutUser } from '../../features/users/userSlice';
@@ -16,11 +16,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const handleLogout = () => {
-      dispatch(logoutUser());
-      navigate('/login');
-  };
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -79,14 +74,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
             ))}
           </nav>
-          <div className="p-4 border-t">
-            <button
-              className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50 rounded-md"
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              Logout
-            </button>
-          </div>
+          
         </div>
       </div>
 
@@ -128,21 +116,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </Link>
             ))}
           </nav>
-
-          <button className="p-4 border-t font-semibold hover:text-red-500"
-          onClick={handleLogout}>
-            <span
-              className={`flex items-center rounded-sm   ${isDesktopSidebarCollapsed ? 'justify-center px-1' : 'px-1'
-                }`}
-              title={isDesktopSidebarCollapsed ? 'Logout' : ''}
-              onClick={handleLogout}
-            >
-              <LogOut className="w-5 h-5" />
-              {!isDesktopSidebarCollapsed && (
-                <span className="ml-3">Logout</span>
-              )}
-            </span>
-          </button>
 
         </div>
       </div>

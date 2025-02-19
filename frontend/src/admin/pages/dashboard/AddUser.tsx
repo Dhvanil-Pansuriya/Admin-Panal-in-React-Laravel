@@ -24,9 +24,9 @@ const AddUser: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null)
 
-    const NAME_CHAR_LIMIT = 225;
-    const EMAIL_CHAR_LIMIT = 225;
-    const PASSWORD_CHAR_LIMIT = 225;
+    const NAME_CHAR_LIMIT = 255;
+    const EMAIL_CHAR_LIMIT = 255;
+    const PASSWORD_CHAR_LIMIT = 255;
 
     const validateForm = (): boolean => {
         const newErrors: ValidationErrors = {};
@@ -57,7 +57,23 @@ const AddUser: React.FC = () => {
                 [name]: undefined,
             });
         }
+
+        if (name === "name" && value.length >= NAME_CHAR_LIMIT) {
+            setErrors((prev) => ({ ...prev, name: `Name must be ${NAME_CHAR_LIMIT} characters or less` }))
+        } else if (name === "email" && value.length >= EMAIL_CHAR_LIMIT) {
+            setErrors((prev) => ({ ...prev, email: `Email must be ${EMAIL_CHAR_LIMIT} characters or less` }))
+        } else if ((name === "password" || name === "password_confirmation") && value.length >= PASSWORD_CHAR_LIMIT) {
+            setErrors((prev) => ({ ...prev, [name]: `Password must be ${PASSWORD_CHAR_LIMIT} characters or less` }))
+        } else {
+            // Clear error for the field being edited if it's within the limit
+            setErrors((prev) => ({ ...prev, [name]: undefined }))
+        }
     };
+
+    const handleFocus = () => {
+        // Clear all errors when focusing on a new input
+        setErrors({})
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,7 +109,6 @@ const AddUser: React.FC = () => {
         } catch (error: any) {
             if (error.response?.data?.message === "Email already exists") {
                 setMessage({ text: 'Email already exists', type: 'error' });
-                setErrors({ email: 'Email already exists' });
             } else {
                 setMessage({
                     text: error.response?.data?.message || 'Failed to create user.',
@@ -142,12 +157,8 @@ const AddUser: React.FC = () => {
                                     className={inputClasses(errors.name)}
                                     placeholder="Enter name"
                                     maxLength={NAME_CHAR_LIMIT}
+                                    onFocus={handleFocus}
                                 />
-                                {
-                                    formData.name.length >= NAME_CHAR_LIMIT && (
-                                        <p className="mt-1 text-sm text-red-600">Name must be less than {NAME_CHAR_LIMIT} characters</p>
-                                    )
-                                }
                                 {errors.name && <p className={errorClasses}>{errors.name}</p>}
                             </div>
 
@@ -162,12 +173,8 @@ const AddUser: React.FC = () => {
                                     className={inputClasses(errors.email)}
                                     placeholder="Enter email"
                                     maxLength={EMAIL_CHAR_LIMIT}
+                                    onFocus={handleFocus}
                                 />
-                                {
-                                    formData.email.length >= EMAIL_CHAR_LIMIT && (
-                                        <p className="mt-1 text-sm text-red-600">Email must be less than {EMAIL_CHAR_LIMIT} characters</p>
-                                    )
-                                }
                                 {errors.email && <p className={errorClasses}>{errors.email}</p>}
                             </div>
 
@@ -182,9 +189,10 @@ const AddUser: React.FC = () => {
                                     className={inputClasses(errors.password)}
                                     placeholder="Enter password"
                                     maxLength={PASSWORD_CHAR_LIMIT}
+                                    onFocus={handleFocus}
                                 />
                                 {
-                                    formData.password.length >= PASSWORD_CHAR_LIMIT && (
+                                    formData.password.length > PASSWORD_CHAR_LIMIT && (
                                         <p className="mt-1 text-sm text-red-600">Password must be less than {PASSWORD_CHAR_LIMIT} characters</p>
                                     )
                                 }
@@ -202,9 +210,10 @@ const AddUser: React.FC = () => {
                                     className={inputClasses(errors.password_confirmation)}
                                     placeholder="Confirm password"
                                     maxLength={PASSWORD_CHAR_LIMIT}
+                                    onFocus={handleFocus}
                                 />
                                 {
-                                    formData.password_confirmation.length >= PASSWORD_CHAR_LIMIT && (
+                                    formData.password_confirmation.length > PASSWORD_CHAR_LIMIT && (
                                         <p className="mt-1 text-sm text-red-600">Password must be less than {PASSWORD_CHAR_LIMIT} characters</p>
                                     )
                                 }
@@ -221,6 +230,7 @@ const AddUser: React.FC = () => {
                                     value={formData.role}
                                     onChange={handleChange}
                                     className={inputClasses(errors.role)}
+                                    onFocus={handleFocus}
                                 >
                                     <option value={0}>User</option>
                                     <option value={1}>Admin</option>

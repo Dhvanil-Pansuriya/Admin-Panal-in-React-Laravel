@@ -53,7 +53,7 @@ class AdminController extends ApiController
         // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users|max:225',
+            'email' => 'required|email|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|integer',
         ]);
@@ -84,7 +84,7 @@ class AdminController extends ApiController
         // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
+            'email' => 'required|email|unique:users,email|max:255,' . $id,
             'password' => 'nullable|string|min:6|confirmed',
             'role' => 'nullable|integer',
         ]);
