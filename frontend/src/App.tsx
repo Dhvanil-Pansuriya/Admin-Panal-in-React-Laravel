@@ -7,7 +7,6 @@ import ProfilePage from './admin/pages/dashboard/ProfilePage';
 import SettingsPage from './admin/pages/dashboard/SettingsPage';
 import ReportsPage from './admin/pages/dashboard/ReportsPage';
 import AllUsers from './admin/pages/dashboard/AllUsers';
-import AllAdmins from './admin/pages/dashboard/AllAdmins';
 import ProtectedRoute from './utils/ProtectedRoute';
 import Home from './user/Home';
 import AddUser from './admin/pages/dashboard/AddUser';
@@ -26,7 +25,6 @@ const App: React.FC = () => {
             <Route path="settings" element={<SettingsPage />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="allusers" element={<AllUsers />} />
-            <Route path="alladmins" element={<AllAdmins />} />
             <Route path="adduser" element={<AddUser />} />
           </Route>
         </Route>

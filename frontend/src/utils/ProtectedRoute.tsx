@@ -5,8 +5,10 @@ const ProtectedRoute: React.FC = () => {
 
     const user = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") as string) : null;
 
-    if (!user) {
-        return <Navigate to="/login"/>;
+    const authToken = localStorage.getItem("authToken");
+
+    if (!user || !authToken) {
+        return <Navigate to="/login" />;
     }
 
     return <Outlet />;

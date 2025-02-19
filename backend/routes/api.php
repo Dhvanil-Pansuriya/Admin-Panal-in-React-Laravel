@@ -18,7 +18,6 @@ Route::middleware(['auth:sanctum', AdminMiddleware::class])->prefix('admin')->gr
         return $request->user();
     });
     Route::get('/users', [AdminController::class, 'getAllUsers'])->name('allUsers');
-    Route::get('/admins', [AdminController::class, 'getAllAdmins'])->name('allAdmins');
     Route::delete('/user/{id}', [AdminController::class, 'deleteUserById'])->name('deleteUser');
     Route::get('/totalUsers', [AdminController::class, 'getTotalUsers'])->name('totalUsers');
     Route::get('/totalAdmins', [AdminController::class, 'getTotalAdmins'])->name('totalAdmins');

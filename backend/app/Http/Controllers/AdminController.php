@@ -9,17 +9,9 @@ class AdminController extends ApiController
 {
     function getAllUsers()
     {
-        $users = User::where('role', '!=', 1)->get();
+        $users = User::get();
         return $this->successResponse(["users" => $users], "All users fetched successfully");
     }
-
-
-    function getAllAdmins()
-    {
-        $users = User::where('role', '!=', 0)->get();
-        return $this->successResponse(["admins" => $users], "All admins fetched successfully");
-    }
-
 
     function getTotalUsers()
     {

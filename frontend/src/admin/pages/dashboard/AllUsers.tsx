@@ -239,7 +239,7 @@ const AllUsers: React.FC = () => {
                   { label: "ID", key: "id" },
                   { label: "Name", key: "name" },
                   { label: "Email", key: null },
-                  { label: "Role", key: null },
+                  { label: "Role", key: "role" },
                   { label: "Created", key: null },
                   { label: "Updated", key: null },
                   { label: "Actions", key: null },
@@ -284,9 +284,20 @@ const AllUsers: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">{user.email}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{user.role == 0 && "User"}</div>
-                  </td>
+                  {
+                    user.role == 1 ? (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500 font-semibold">Admin</div>
+                      </td>
+                    ) : (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-500">User</div>
+                      </td>
+                    )
+                  }
+                  {/* <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">{user.role == 1 ? "Admin" : "User"}</div>
+                  </td> */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
                       {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
@@ -298,7 +309,14 @@ const AllUsers: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openDeleteModal(user.id)}>
+                    {/* <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openDeleteModal(user.id)}>
+                      <Trash2 size={20} className="inline-block" />
+                    </button> */}
+                    <button
+                      className={`text-gray-600 hover:text-gray-800 mx-1 ${user.role === 1 ? "cursor-not-allowed opacity-50" : ""}`}
+                      onClick={() => user.role !== 1 && openDeleteModal(user.id)}
+                      disabled={user.role === 1}
+                    >
                       <Trash2 size={20} className="inline-block" />
                     </button>
                     <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openEditModal(user)}>
