@@ -83,24 +83,29 @@ class AdminController extends ApiController
 
         // Validate the request data
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email|max:255,' . $id,
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $id . '|max:255',
             'password' => 'nullable|string|min:6|confirmed',
             'role' => 'nullable|integer',
         ]);
 
         // Update the user details
-        $user->name = $validatedData['name'];
-        $user->email = $validatedData['email'];
+        if (isset($validatedData['name'])) {
+            $user->name = $validatedData['name'];
+        }
+        if (isset($validatedData['email'])) {
+            $user->email = $validatedData['email'];
+        }
         if (!empty($validatedData['password'])) {
             $user->password = bcrypt($validatedData['password']);
         }
-        $user->role = $validatedData['role'];
+        if (isset($validatedData['role'])) {
+            $user->role = $validatedData['role'];
+        }
         $user->save();
 
         return $this->successResponse(["user" => $user], "User updated successfully", 200);
     }
-
 
     function deleteUserById($id)
     {

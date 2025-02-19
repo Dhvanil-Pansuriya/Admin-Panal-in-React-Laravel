@@ -1,5 +1,4 @@
-import type React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../../app/store";
 import axios from "axios";
@@ -16,6 +15,12 @@ const SettingsPage: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if form values are different from initial values
+  const hasChanges = 
+    name !== user?.name || 
+    email !== user?.email || 
+    role !== user?.role;
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -23,7 +28,7 @@ const SettingsPage: React.FC = () => {
     setSuccess(null);
 
     try {
-      const token = localStorage.getItem("authToken"); // Assuming you store the token in localStorage
+      const token = localStorage.getItem("authToken");
       const response = await axios.put(
         `${import.meta.env.VITE_SERVER_ADMIN_API}/user/${user?.id}`,
         { name, email, role },
@@ -36,7 +41,6 @@ const SettingsPage: React.FC = () => {
 
       if (response.data) {
         setSuccess("User updated successfully!");
-        // Update Redux state if needed
         dispatch(updateUser({ name, email, role }));
       }
     } catch (err: any) {
@@ -113,8 +117,12 @@ const SettingsPage: React.FC = () => {
 
               <button
                 type="submit"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mt-4"
-                disabled={isLoading}
+                className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm shadow-sm text-white ${
+                  hasChanges 
+                    ? 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500' 
+                    : 'bg-gray-400 cursor-not-allowed'
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 mt-4`}
+                disabled={isLoading || !hasChanges}
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin mr-2 h-4 w-4" />
@@ -138,7 +146,6 @@ const SettingsPage: React.FC = () => {
             )}
           </div>
         </div>
-        
       </div>
     </div>
   );
