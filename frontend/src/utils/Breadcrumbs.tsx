@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronRight, Home } from "lucide-react"; // Import the Home icon
+import { ChevronRight } from "lucide-react";
 
 // Define a customizable object for route names
 const routeNames: { [key: string]: string } = {
-    'dashboard': 'Dashboard',
+    'dashboard': 'Home',
     'alladminsusers': "All Admins & Users",
     'alladmins': "All Admins",
     'allusers': 'All Users',
@@ -23,18 +23,16 @@ const Breadcrumbs: React.FC = () => {
             {pathnames.map((name, index) => {
                 const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
                 const isLast = index === pathnames.length - 1;
-                const displayName = routeNames[name] || name;
+                const displayName = routeNames[name] || name; 
 
                 return (
                     <React.Fragment key={name}>
                         {isLast ? (
-                            <span className="text-gray-900 capitalize">
-                                {name === 'dashboard' ? <Home className="h-4 w-4" /> : displayName}
-                            </span>
+                            <span className="text-gray-900 capitalize">{displayName}</span>
                         ) : (
                             <>
                                 <Link to={routeTo} className="hover:text-gray-900 capitalize">
-                                    {name === 'dashboard' ? <Home className="h-4 w-4" /> : displayName}
+                                    {displayName}
                                 </Link>
                                 <ChevronRight className="mx-2 h-4 w-4" />
                             </>
@@ -47,3 +45,4 @@ const Breadcrumbs: React.FC = () => {
 };
 
 export default Breadcrumbs;
+
