@@ -1,14 +1,15 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, Loader2, Trash2 } from "lucide-react"
 import type React from "react"
 import { useEffect, useState, useMemo } from "react"
 import axios from "axios"
 import ConfirmationModal from "../../utils/ConfirmationModal"
 import EditModal from "../../utils/EditModal"
 import { formatDistanceToNow } from "date-fns";
-import PopupNotification from "../../utils/PopupNotification"
 import { useNavigate } from "react-router-dom"
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface User {
   id: number
@@ -24,8 +25,6 @@ type SortKey = "name" | "email"
 
 const AllUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
-  const [showPopup, setShowPopup] = useState(false)
-  const [deletedUser, setDeletedUser] = useState<{ name: string; email: string } | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: "ascending" | "descending" } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -36,7 +35,6 @@ const AllUsers: React.FC = () => {
   const [userToDelete, setUserToDelete] = useState<number | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
-  const [updateMessage, setUpdateMessage] = useState<string | null>(null)
 
   const navigate = useNavigate()
 
@@ -81,12 +79,46 @@ const AllUsers: React.FC = () => {
     setIsEditModalOpen(false)
     setUserToEdit(null)
   }
+  const handleDelete = (id: number) => {
+    const token = localStorage.getItem("authToken");
 
-  const handleUpdate = async (updatedUser: Partial<User>) => {
-    const token = localStorage.getItem("authToken")
     if (!token) {
-      setError("No authentication token found. Please log in.")
-      return
+      setError("No authentication token found. Please log in.");
+      return;
+    }
+
+    axios
+      .delete(`${import.meta.env.VITE_SERVER_ADMIN_API}/user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        const userToDelete = users.find((user) => user.id === id);
+        if (userToDelete) {
+          setUsers(users.filter((user) => user.id !== id));
+          setIsDeleteModalOpen(false);
+          toast.error(`User ${userToDelete.name} has been deleted.`, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+        setError("Failed to delete user. Please check your permissions and try again.");
+      });
+  };
+  const handleUpdate = async (updatedUser: Partial<User>) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No authentication token found. Please log in.");
+      return;
     }
 
     try {
@@ -94,25 +126,27 @@ const AllUsers: React.FC = () => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
+      });
 
       if (response.data.success) {
         setUsers((prevUsers) =>
           prevUsers.map((user) => (user.id === userToEdit?.id ? { ...user, ...response.data.data.user } : user)),
-        )
-        setUpdateMessage(`User ${updatedUser.name} updated successfully!`)
-        setShowPopup(true)
-        setTimeout(() => {
-          setShowPopup(false)
-          setUpdateMessage(null)
-        }, 3000)
-        closeEditModal()
+        );
+        toast.success(`User ${updatedUser.name} updated successfully!`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        closeEditModal();
       }
     } catch (error) {
-      console.error("Error updating user:", error)
-      setError("Failed to update user. Please check your permissions and try again.")
+      console.error("Error updating user:", error);
+      setError("Failed to update user. Please check your permissions and try again.");
     }
-  }
+  };
 
   const openDeleteModal = (id: number) => {
     setUserToDelete(id)
@@ -124,37 +158,7 @@ const AllUsers: React.FC = () => {
     setUserToDelete(null)
   }
 
-  const handleDelete = (id: number) => {
-    const token = localStorage.getItem("authToken")
 
-    if (!token) {
-      setError("No authentication token found. Please log in.")
-      return
-    }
-
-    axios
-      .delete(`${import.meta.env.VITE_SERVER_ADMIN_API}/user/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(() => {
-        const userToDelete = users.find((user) => user.id === id)
-        if (userToDelete) {
-          setDeletedUser({ name: userToDelete.name, email: userToDelete.email })
-          setUsers(users.filter((user) => user.id !== id))
-          setShowPopup(true)
-          setIsDeleteModalOpen(false)
-          setTimeout(() => {
-            setShowPopup(false)
-          }, 3000)
-        }
-      })
-      .catch((error) => {
-        console.error("Error deleting user:", error)
-        setError("Failed to delete user. Please check your permissions and try again.")
-      })
-  }
 
   const handleSort = (key: SortKey) => {
     let direction: "ascending" | "descending" = "ascending"
@@ -205,7 +209,12 @@ const AllUsers: React.FC = () => {
   }
 
   if (loading) {
-    return <div className="text-center py-6">Loading users...</div>
+    return (
+      <div className="flex justify-center items-center">
+        <Loader2 size={32} className="animate-spin mx-3 text-gray-600" />
+        <div className="text-center py-6">Loading users...</div>
+      </div>
+    )
   }
 
   if (error) {
@@ -215,7 +224,7 @@ const AllUsers: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold text-gray-900">All Admins & Users</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">All Users</h1>
       </div>
       <div className="flex items-center justify-between">
         <input
@@ -239,7 +248,7 @@ const AllUsers: React.FC = () => {
                   { label: "ID", key: "id" },
                   { label: "Name", key: "name" },
                   { label: "Email", key: null },
-                  { label: "Role", key: "role" },
+                  { label: "Role", key: null },
                   { label: "Created", key: null },
                   { label: "Updated", key: null },
                   { label: "Actions", key: null },
@@ -406,15 +415,11 @@ const AllUsers: React.FC = () => {
           <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} onSave={handleUpdate} user={userToEdit} />
         </div>
       </div>
+      <ToastContainer />
 
-      <PopupNotification
-        showPopup={showPopup}
-        deletedUser={deletedUser}
-        updateMessage={updateMessage}
-        onClose={() => setShowPopup(false)}
-      />
     </div>
   )
 }
 
 export default AllUsers
+

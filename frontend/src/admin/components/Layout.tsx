@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Settings, Users, BarChart3, UserCircle, ChevronLeft, ChevronRight, Shield, Plus } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Home, Settings, Users, BarChart3, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar from '../../components/Navbar';
-import { useDispatch } from 'react-redux';
-import { logoutUser } from '../../features/users/userSlice';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,9 +11,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false);
   const location = useLocation();
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },

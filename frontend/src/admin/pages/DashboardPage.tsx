@@ -23,13 +23,11 @@ const DashboardPage: React.FC = () => {
         });
         if (response.data.role === 1) {
           setIsAdmin(true);
-          console.log("Admin access TRUE");
-          
         } else {
           setIsAdmin(false);
         }
       } catch (error) {
-        setIsAdmin(false);  
+        setIsAdmin(false);
       }
     };
 
@@ -43,7 +41,7 @@ const DashboardPage: React.FC = () => {
 
   // While checking the admin status, show a loading state
   if (isAdmin === null) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   // If the user is an admin, show the dashboard

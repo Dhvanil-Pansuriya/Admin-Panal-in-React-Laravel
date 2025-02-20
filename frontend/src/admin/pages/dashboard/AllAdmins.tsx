@@ -1,11 +1,14 @@
-import { Edit, ChevronLeft, ChevronRight } from "lucide-react"
+import { Edit, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import type React from "react"
 import { useEffect, useState, useMemo } from "react"
 import axios from "axios"
 import { formatDistanceToNow } from "date-fns"
 import EditModal from "../../utils/EditModal"
-import PopupNotification from "../../utils/PopupNotification"
 import { useNavigate } from "react-router-dom"
+import { updateUser } from "../../../features/users/userSlice"
+import { useDispatch } from "react-redux"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css";
 
 interface User {
   id: number
@@ -29,10 +32,10 @@ const AllAdmins: React.FC = () => {
   const [adminsPerPage] = useState(10)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
-  const [updateMessage, setUpdateMessage] = useState<string | null>(null)
-  const [showPopup, setShowPopup] = useState(false)
+
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const token = localStorage.getItem("authToken")
@@ -143,12 +146,15 @@ const AllAdmins: React.FC = () => {
         setAdmins((prevUsers) =>
           prevUsers.map((user) => (user.id === userToEdit?.id ? { ...user, ...response.data.data.user } : user)),
         )
-        setUpdateMessage(`Admin ${updatedUser.name} updated successfully!`)
-        setShowPopup(true)
-        setTimeout(() => {
-          setShowPopup(false)
-          setUpdateMessage(null)
-        }, 3000)
+        dispatch(updateUser({ name: updatedUser.name, email: updatedUser.email, role: updatedUser.role }));
+        toast.success(`User ${updatedUser.name} updated successfully!`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         closeEditModal()
       }
     } catch (error) {
@@ -158,7 +164,12 @@ const AllAdmins: React.FC = () => {
   }
 
   if (loading) {
-    return <div className="text-center py-6">Loading admins...</div>
+    return (
+      <div className="flex justify-center items-center">
+        <Loader2 size={32} className="animate-spin mx-3 text-gray-600" />
+        <div className="text-center py-6">Loading admins...</div>
+      </div>
+    )
   }
 
   if (error) {
@@ -234,14 +245,24 @@ const AllAdmins: React.FC = () => {
                     <div className="text-sm font-medium text-gray-900">{user.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                    <div className="text-sm font-medium text-gray-900 w-32 overflow-hidden text-ellipsis whitespace-nowrap" title={user.name}>
+                      {user.name}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{user.email}</div>
+                    <div className="text-sm text-gray-500 w-40 overflow-hidden text-ellipsis whitespace-nowrap" title={user.email}>
+                      {user.email}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{user.role == 1 && "Admin"}</div>
-                  </td>
+                  {user.role === 1 ? (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500 font-semibold">Admin</div>
+                    </td>
+                  ) : (
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-500">User</div>
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">
                       {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
@@ -252,12 +273,13 @@ const AllAdmins: React.FC = () => {
                       {formatDistanceToNow(new Date(user.updated_at), { addSuffix: true })}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <button className="text-gray-600 hover:text-gray-900 mx-1" onClick={() => openEditModal(user)}>
+                  <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                    <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openEditModal(user)}>
                       <Edit size={20} className="inline-block" />
                     </button>
                   </td>
                 </tr>
+
               ))}
             </tbody>
           </table>
@@ -339,11 +361,8 @@ const AllAdmins: React.FC = () => {
           </div>
         </div>
         <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} onSave={handleUpdate} user={userToEdit} />
-        <PopupNotification
-          showPopup={showPopup}
-          updateMessage={updateMessage}
-          onClose={() => setShowPopup(false)}
-        />
+        <ToastContainer /> {/* Add this line */}
+
       </div>
     </div>
   )

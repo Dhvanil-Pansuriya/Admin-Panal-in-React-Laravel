@@ -57,10 +57,10 @@ const Navbar: React.FC<LayoutProps> = ({ children }) => {
 
     return (
         <>
-            <nav className="sticky top-0 z-10 bg-white flex items-center justify-between h-16 px-4 border-b">
+            <nav className="sticky top-0 z-10 bg-white flex items-center justify-between h-16 px-4 border-b ">
                 {children}
                 <div className="text-black text-xl font-bold">
-                    <Link to="/" className="text-xl font-semibold">
+                    <Link to="/" className="text-xl font-semibold hover:text-gray-700 transition-colors">
                         My App
                     </Link>
                 </div>
@@ -68,7 +68,7 @@ const Navbar: React.FC<LayoutProps> = ({ children }) => {
                     {isDashboardRoute ? (
                         <button
                             ref={buttonRef}
-                            className="flex items-center justify-center mr-1 w-10 h-10 text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-sm"
+                            className="flex items-center justify-center mr-1 w-10 h-10 text-gray-600 bg-gray-200 hover:bg-gray-300 rounded-sm transition-colors"
                             onClick={handleProfileClick}
                         >
                             <User2 className="w-5 h-5" />
@@ -76,7 +76,7 @@ const Navbar: React.FC<LayoutProps> = ({ children }) => {
                     ) : (
                         <button
                             onClick={handleLogout}
-                            className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-md"
+                            className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
                         >
                             <LogOut className="w-5 h-5 mr-3" />
                             Logout
@@ -90,45 +90,45 @@ const Navbar: React.FC<LayoutProps> = ({ children }) => {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.2 }}
-                                className="absolute right-0 mt-4 mr-1 w-48 bg-white rounded-sm shadow-lg py-0 z-40"
+                                className="absolute right-0 mt-4 w-72 bg-white rounded-sm shadow-lg overflow-hidden border border-gray-100"
                             >
-                                <div className="flex items-center w-full justify-center">
-                                    <div className="max-w-xs">
-                                        <div className="photo-wrapper py-2 flex items-center justify-center">
-                                            <div className="h-20 w-20 rounded-md bg-gray-200 flex items-center justify-center">
-                                                <User2 className="w-10 h-10" />
-                                            </div>
+                                <div className="px-6 py-4">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="h-16 w-16 rounded-sm bg-gray-100 flex items-center justify-center flex-shrink-0">
+                                            <User2 className="w-8 h-8 text-gray-600" />
                                         </div>
-                                        <div className="pb-2">
-                                            <h3 className="text-center text-xl text-gray-900 font-medium leading-8">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-lg font-semibold text-gray-900 truncate hover:cursor-pointer" title={user?.name}>    
                                                 {user?.name}
                                             </h3>
-                                            <div className="text-center text-gray-600 text-xs font-semibold">
-                                                <p>{user?.email}</p>
-                                            </div>
+                                            <p className="text-sm text-gray-500 truncate hover:cursor-pointer" title={user?.email}>
+                                                {user?.email}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={handleEditProfile}
-                                    className="flex items-center w-full px-4 py-2 text-gray-800 hover:bg-gray-100"
-                                >
-                                    <User className="w-5 h-5 mr-3" />
-                                    Profile
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-50"
-                                >
-                                    <LogOut className="w-5 h-5 mr-3" />
-                                    Logout
-                                </button>
+                                <div className="border-t border-gray-100">
+                                    <button
+                                        onClick={handleEditProfile}
+                                        className="flex items-center w-full px-6 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <User className="w-5 h-5 mr-3" />
+                                        <span className="text-sm font-medium">Profile</span>
+                                    </button>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="flex items-center w-full px-6 py-3 text-red-600 hover:bg-red-50 transition-colors"
+                                    >
+                                        <LogOut className="w-5 h-5 mr-3" />
+                                        <span className="text-sm font-medium">Logout</span>
+                                    </button>
+                                </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
             </nav>
-            <section className="sticky top-16 bg-gray-100 z-0 p-3 flex items-center">
+            <section className="sticky top-16 bg-gray-100 z-0 px-4 py-2">
                 <Breadcrumbs />
             </section>
         </>

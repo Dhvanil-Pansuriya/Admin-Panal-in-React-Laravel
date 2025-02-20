@@ -1,14 +1,14 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, Edit, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, Loader2, Trash2 } from "lucide-react"
 import type React from "react"
 import { useEffect, useState, useMemo } from "react"
 import axios from "axios"
 import ConfirmationModal from "../../utils/ConfirmationModal"
 import EditModal from "../../utils/EditModal"
 import { formatDistanceToNow } from "date-fns";
-import PopupNotification from "../../utils/PopupNotification"
 import { useNavigate } from "react-router-dom"
+import { toast, ToastContainer } from "react-toastify"
 
 interface User {
   id: number
@@ -24,8 +24,6 @@ type SortKey = "name" | "email"
 
 const AllUsers: React.FC = () => {
   const [users, setUsers] = useState<User[]>([])
-  const [showPopup, setShowPopup] = useState(false)
-  const [deletedUser, setDeletedUser] = useState<{ name: string; email: string } | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: "ascending" | "descending" } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -36,7 +34,6 @@ const AllUsers: React.FC = () => {
   const [userToDelete, setUserToDelete] = useState<number | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
-  const [updateMessage, setUpdateMessage] = useState<string | null>(null)
 
   const navigate = useNavigate()
 
@@ -100,12 +97,14 @@ const AllUsers: React.FC = () => {
         setUsers((prevUsers) =>
           prevUsers.map((user) => (user.id === userToEdit?.id ? { ...user, ...response.data.data.user } : user)),
         )
-        setUpdateMessage(`User ${updatedUser.name} updated successfully!`)
-        setShowPopup(true)
-        setTimeout(() => {
-          setShowPopup(false)
-          setUpdateMessage(null)
-        }, 3000)
+        toast.success(`User ${updatedUser.name} updated successfully!`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         closeEditModal()
       }
     } catch (error) {
@@ -141,13 +140,17 @@ const AllUsers: React.FC = () => {
       .then(() => {
         const userToDelete = users.find((user) => user.id === id)
         if (userToDelete) {
-          setDeletedUser({ name: userToDelete.name, email: userToDelete.email })
-          setUsers(users.filter((user) => user.id !== id))
-          setShowPopup(true)
+          toast.error(`User ${userToDelete.name} has been deleted.`, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            theme: "colored",
+          });
           setIsDeleteModalOpen(false)
-          setTimeout(() => {
-            setShowPopup(false)
-          }, 3000)
+
         }
       })
       .catch((error) => {
@@ -205,7 +208,12 @@ const AllUsers: React.FC = () => {
   }
 
   if (loading) {
-    return <div className="text-center py-6">Loading users...</div>
+    return (
+      <div className="flex justify-center items-center">
+        <Loader2 size={32} className="animate-spin mx-3 text-gray-600" />
+        <div className="text-center py-6">Loading users...</div>
+      </div>
+    )
   }
 
   if (error) {
@@ -239,7 +247,7 @@ const AllUsers: React.FC = () => {
                   { label: "ID", key: "id" },
                   { label: "Name", key: "name" },
                   { label: "Email", key: null },
-                  { label: "Role", key: "role" },
+                  { label: "Role", key: null },
                   { label: "Created", key: null },
                   { label: "Updated", key: null },
                   { label: "Actions", key: null },
@@ -407,12 +415,8 @@ const AllUsers: React.FC = () => {
         </div>
       </div>
 
-      <PopupNotification
-        showPopup={showPopup}
-        deletedUser={deletedUser}
-        updateMessage={updateMessage}
-        onClose={() => setShowPopup(false)}
-      />
+      <ToastContainer />
+
     </div>
   )
 }

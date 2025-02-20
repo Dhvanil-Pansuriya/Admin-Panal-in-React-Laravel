@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { UserPlus, CheckCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 
 interface ValidationErrors {
     name?: string;
@@ -137,9 +137,6 @@ const AddUser: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-semibold text-gray-900">Add User</h1>
-                <div className="bg-gray-100 rounded-full p-2 transition-transform duration-300 hover:scale-105">
-                    <UserPlus className="h-5 w-5 text-gray-600" />
-                </div>
             </div>
 
             <div className="bg-white shadow rounded-sm">
