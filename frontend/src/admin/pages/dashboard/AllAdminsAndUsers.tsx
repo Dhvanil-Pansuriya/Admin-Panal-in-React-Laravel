@@ -10,6 +10,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ViewUserModal from "../../utils/ViewUserModal"
 
 interface User {
   id: number
@@ -20,6 +21,7 @@ interface User {
   created_at: string
   updated_at: string
   role: number
+  token: string
 }
 
 type SortKey = "name" | "email"
@@ -36,6 +38,8 @@ const AllUsers: React.FC = () => {
   const [userToDelete, setUserToDelete] = useState<number | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [userToEdit, setUserToEdit] = useState<User | null>(null)
+  const [userToView, setUserToView] = useState<User | null>(null)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
 
   const navigate = useNavigate()
 
@@ -51,7 +55,7 @@ const AllUsers: React.FC = () => {
     axios
       .get(`${import.meta.env.VITE_SERVER_ADMIN_API}/adminsAndUsers`, {
         headers: {
-          Authorization: `Bearer ${token}`,   
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -75,11 +79,23 @@ const AllUsers: React.FC = () => {
     setIsEditModalOpen(true)
   }
 
+  const openViewModal = (user: User) => {
+    setUserToView(user)
+    setIsViewModalOpen(true)
+  }
+
+
   // Close Edit Modal
   const closeEditModal = () => {
     setIsEditModalOpen(false)
     setUserToEdit(null)
   }
+
+  const closeViewModal = () => {
+    setIsViewModalOpen(false)
+    setUserToView(null)
+  }
+
   const handleDelete = (id: number) => {
     const token = localStorage.getItem("authToken");
 
@@ -349,7 +365,7 @@ const AllUsers: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
-                  <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openEditModal(user)}>
+                    <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openViewModal(user)}>
                       <Eye size={20} className="inline-block" />
                     </button>
                     <button
@@ -446,8 +462,23 @@ const AllUsers: React.FC = () => {
             title="Confirm Deletion"
             message="Are you sure you want to delete this user? This action cannot be undone."
           />
+
           {/* Edit modal */}
-          <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} onSave={handleUpdate} user={userToEdit} />
+          <EditModal
+            isOpen={isEditModalOpen}
+            onClose={closeEditModal}
+            onSave={handleUpdate}
+            user={userToEdit}
+          />
+
+          {/* View User Modal */}
+          <ViewUserModal
+            isOpen={isViewModalOpen}
+            onClose={closeViewModal}
+            user={userToView}
+          />
+
+          <ToastContainer />
         </div>
       </div>
       <ToastContainer />
