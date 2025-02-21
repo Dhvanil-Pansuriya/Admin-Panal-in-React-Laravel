@@ -51,7 +51,7 @@ const AllUsers: React.FC = () => {
     axios
       .get(`${import.meta.env.VITE_SERVER_ADMIN_API}/adminsAndUsers`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,   
         },
       })
       .then((response) => {
