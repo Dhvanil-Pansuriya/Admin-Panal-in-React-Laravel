@@ -8,6 +8,7 @@ import { AlertCircle, X } from "lucide-react";
 interface User {
   id: number;
   name: string;
+  gender: string;
   email: string;
   role: number;
 }
@@ -23,6 +24,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
   const [formData, setFormData] = useState<Partial<User>>({
     name: "",
     email: "",
+    gender: "",
     role: 0,
   });
 
@@ -34,6 +36,7 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
       setFormData({
         name: user.name,
         email: user.email,
+        gender: user.gender,
         role: user.role,
       });
     }
@@ -131,6 +134,24 @@ const EditModal: React.FC<EditModalProps> = ({ isOpen, onClose, onSave, user }) 
                   className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
+              </div>
+              <div className="mb-4">
+
+                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  id="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  required
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
               </div>
               <div className="flex justify-end space-x-3">
                 <button

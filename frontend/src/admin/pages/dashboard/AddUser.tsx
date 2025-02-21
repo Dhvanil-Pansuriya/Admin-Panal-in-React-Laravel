@@ -8,6 +8,7 @@ interface ValidationErrors {
     password?: string;
     password_confirmation?: string;
     role?: string;
+    gender?: string;
 }
 
 const AddUser: React.FC = () => {
@@ -17,6 +18,7 @@ const AddUser: React.FC = () => {
         password: '',
         password_confirmation: '',
         role: 0,
+        gender: '',
     });
 
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -27,7 +29,6 @@ const AddUser: React.FC = () => {
     const NAME_CHAR_LIMIT = 255;
     const EMAIL_CHAR_LIMIT = 255;
     const PASSWORD_CHAR_LIMIT = 255;
-
     const validateForm = (): boolean => {
         const newErrors: ValidationErrors = {};
         let isValid = true;
@@ -37,6 +38,11 @@ const AddUser: React.FC = () => {
             isValid = false;
         } else if (formData.password !== formData.password_confirmation) {
             newErrors.password_confirmation = 'Passwords do not match';
+            isValid = false;
+        }
+
+        if (!formData.gender) {
+            newErrors.gender = 'Please select a gender';
             isValid = false;
         }
 
@@ -69,7 +75,6 @@ const AddUser: React.FC = () => {
             setErrors((prev) => ({ ...prev, [name]: undefined }))
         }
     };
-
     const handleFocus = () => {
         // Clear all errors when focusing on a new input
         setErrors({})
@@ -104,6 +109,7 @@ const AddUser: React.FC = () => {
                 password: '',
                 password_confirmation: '',
                 role: 0,
+                gender: '', // Reset gender field
             });
             setErrors({});
         } catch (error: any) {
@@ -174,7 +180,23 @@ const AddUser: React.FC = () => {
                                 />
                                 {errors.email && <p className={errorClasses}>{errors.email}</p>}
                             </div>
-
+                            <div>
+                                <label htmlFor="gender" className={labelClasses}>Gender</label>
+                                <select
+                                    id="gender"
+                                    name="gender"
+                                    value={formData.gender}
+                                    onChange={handleChange}
+                                    className={inputClasses(errors.gender)}
+                                    onFocus={handleFocus}
+                                >
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                {errors.gender && <p className={errorClasses}>{errors.gender}</p>}
+                            </div>
                             <div>
                                 <label htmlFor="password" className={labelClasses}>Password</label>
                                 <input

@@ -31,15 +31,18 @@ class UserAuthController extends ApiController
         $request->validate([
             "name" => "required",
             "email" => "required|email|unique:users",
-            "password" => "required|min:6"
+            "password" => "required|min:6",
+            "gender" => "required|in:Male,Female,Other"
         ]);
 
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->gender = $request->gender;
         $user->save();
 
         return $this->successResponse($user, "User created successfully");
     }
+
 }

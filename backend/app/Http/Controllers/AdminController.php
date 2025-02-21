@@ -50,12 +50,14 @@ class AdminController extends ApiController
         if (User::where('email', $request->email)->exists()) {
             return $this->errorResponse("Email already exists", 400);
         }
+
         // Validate the request data
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users|max:255',
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|integer',
+            'gender' => 'required|in:male,female,other',
         ]);
 
         // Create a new user
@@ -64,12 +66,11 @@ class AdminController extends ApiController
         $user->email = $validatedData['email'];
         $user->password = bcrypt($validatedData['password']);
         $user->role = $validatedData['role'];
+        $user->gender = $validatedData['gender'];
         $user->save();
 
         return $this->successResponse(["user" => $user], "User created successfully", 201);
     }
-    // Check if the email already exists
-
 
     public function updateUser(Request $request, $id)
     {
@@ -85,6 +86,7 @@ class AdminController extends ApiController
         $validatedData = $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $id . '|max:255',
+            'gender' => 'nullable|in:male,female,other',
             'password' => 'nullable|string|min:6|confirmed',
             'role' => 'nullable|integer',
         ]);
@@ -102,10 +104,15 @@ class AdminController extends ApiController
         if (isset($validatedData['role'])) {
             $user->role = $validatedData['role'];
         }
+        if (isset($validatedData['gender'])) {
+            $user->gender = $validatedData['gender'];
+        }
+
         $user->save();
 
         return $this->successResponse(["user" => $user], "User updated successfully", 200);
     }
+
 
     function deleteUserById($id)
     {

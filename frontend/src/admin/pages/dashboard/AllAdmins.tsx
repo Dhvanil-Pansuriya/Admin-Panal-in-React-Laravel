@@ -13,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 interface User {
   id: number
   name: string
+  gender: string
   email: string
   email_verified_at: string | null
   created_at: string
@@ -205,6 +206,7 @@ const AllAdmins: React.FC = () => {
                   { label: "ID", key: "id" },
                   { label: "Name", key: "name" },
                   { label: "Email", key: null },
+                  { label: "Gander", key: null },
                   { label: "Role", key: null },
                   { label: "Created", key: null },
                   { label: "Updated", key: null },
@@ -254,6 +256,36 @@ const AllAdmins: React.FC = () => {
                       {user.email}
                     </div>
                   </td>
+                  {
+                    user.gender === "male" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className="text-sm text-white py-0.5 font-semibold bg-blue-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2"
+                          title={user.gender}
+                        >
+                          Male
+                        </div>
+                      </td>
+
+                    )
+                  }{
+                    user.gender === "female" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-white py-0.5 font-semibold bg-pink-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2" title={user.gender}>
+                          Female
+                        </div>
+                      </td>
+                    )
+                  }
+                  {
+                    user.gender === "other" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-white py-0.5 font-semibold bg-gray-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2" title={user.gender}>
+                          {user.gender}
+                        </div>
+                      </td>
+                    )
+                  }
                   {user.role === 1 ? (
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500 font-semibold">Admin</div>

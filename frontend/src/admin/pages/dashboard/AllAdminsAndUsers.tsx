@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, Edit, Loader2, Trash2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, Eye, Loader2, Trash2 } from "lucide-react"
 import type React from "react"
 import { useEffect, useState, useMemo } from "react"
 import axios from "axios"
@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 interface User {
   id: number
   name: string
+  gender: string
   email: string
   email_verified_at: string | null
   created_at: string
@@ -248,6 +249,7 @@ const AllUsers: React.FC = () => {
                   { label: "ID", key: "id" },
                   { label: "Name", key: "name" },
                   { label: "Email", key: null },
+                  { label: "Gender", key: null },
                   { label: "Role", key: null },
                   { label: "Created", key: null },
                   { label: "Updated", key: null },
@@ -297,6 +299,36 @@ const AllUsers: React.FC = () => {
                       {user.email}
                     </div>
                   </td>
+                  {
+                    user.gender === "male" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div
+                          className="text-sm text-white py-0.5 font-semibold bg-blue-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2"
+                          title={user.gender}
+                        >
+                          Male
+                        </div>
+                      </td>
+
+                    )
+                  }{
+                    user.gender === "female" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-white py-0.5 font-semibold bg-pink-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2" title={user.gender}>
+                          Female
+                        </div>
+                      </td>
+                    )
+                  }
+                  {
+                    user.gender === "other" && (
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-white py-0.5 font-semibold bg-gray-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2" title={user.gender}>
+                          {user.gender}
+                        </div>
+                      </td>
+                    )
+                  }
                   {user.role === 1 ? (
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500 font-semibold">Admin</div>
@@ -317,6 +349,9 @@ const AllUsers: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                  <button className="text-gray-600 hover:text-gray-800 mx-1" onClick={() => openEditModal(user)}>
+                      <Eye size={20} className="inline-block" />
+                    </button>
                     <button
                       className={`text-gray-600 hover:text-gray-800 mx-1 ${user.role === 1 ? "cursor-not-allowed opacity-50" : ""
                         }`}

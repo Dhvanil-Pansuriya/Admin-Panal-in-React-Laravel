@@ -32,13 +32,36 @@ const ProfilePage: React.FC = () => {
             <div>
               <h2 className="text-xl font-medium text-gray-900">{user.name}</h2>
               <p className="text-gray-500">{user.email}</p>
+              {
+                user.gender === "male" && (
+                  <div
+                    className="text-sm text-white py-1 my-2  font-semibold bg-blue-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2"
+                    title={user.gender}
+                  >
+                    Male
+                  </div>
+                )
+              }{
+                user.gender === "female" && (
+                  <div className="text-sm text-white py-1 my-2  font-semibold bg-pink-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2" title={user.gender}>
+                    Female
+                  </div>
+                )
+              }
+              {
+                user.gender === "other" && (
+                  <div className="text-sm text-white py-1 my-2  font-semibold bg-gray-400 text-center rounded-md overflow-hidden text-ellipsis whitespace-nowrap inline-block px-2" title={user.gender}>
+                    {user.gender}
+                  </div>
+                )
+              }
             </div>
           </div>
           <div>
             <button
               type="submit"
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-sm shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 mt-4 right-0"
-              onClick={()=>navigate("/dashboard/settings")}
+              onClick={() => navigate("/dashboard/settings")}
             >
               Update Profile
             </button>

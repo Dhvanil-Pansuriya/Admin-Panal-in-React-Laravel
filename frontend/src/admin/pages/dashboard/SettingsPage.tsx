@@ -2,34 +2,30 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../../app/store";
 import axios from "axios";
-import { Check, X, Loader2 } from "lucide-react";
+import { Check, Loader2 } from "lucide-react";
 import { updateUser } from "../../../features/users/userSlice";
-import PopupNotification from "../../utils/PopupNotification";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SettingsPage: React.FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.userData);
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
+  const [gender, setGender] = useState(user?.gender || "");
   const [role, setRole] = useState(user?.role);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-
-  const hasChanges = name !== user?.name || email !== user?.email || role !== user?.role;
+  const hasChanges = name !== user?.name || email !== user?.email || role !== user?.role || gender !== user?.gender;
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
-    setSuccess(null);
 
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.put(
         `${import.meta.env.VITE_SERVER_ADMIN_API}/user/${user?.id}`,
-        { name, email, role },
+        { name, email, gender, role },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -38,14 +34,19 @@ const SettingsPage: React.FC = () => {
       );
 
       if (response.data) {
-        setSuccess(`User ${name} successfully!`);
-        dispatch(updateUser({ name, email, role }));
-        setShowPopup(true);
+        toast.success(`User ${name} updated successfully!`, {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        dispatch(updateUser({ name, email, gender, role }));
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || "An error occurred while updating the user.";
-      setError(errorMessage);
-      setShowPopup(true);
+      throw errorMessage
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +85,20 @@ const SettingsPage: React.FC = () => {
                     disabled
                   />
                 </div>
+                <label htmlFor="gender" className="block text-sm font-medium text-gray-700 my-2">
+                  Gender
+                </label>
+                <select
+                  name="gender"
+                  id="gender"
+                  className="mt-1 block w-full rounded-sm py-2 px-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
                 <label htmlFor="role" className="block text-sm font-medium text-gray-700 my-2">
                   Role
                 </label>
@@ -108,11 +123,11 @@ const SettingsPage: React.FC = () => {
                 {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Check className="mr-2 h-4 w-4" />} Save Changes
               </button>
             </form>
-           
+
           </div>
         </div>
       </div>
-      <PopupNotification showPopup={showPopup} updateMessage={success || error} onClose={() => setShowPopup(false)} />
+      <ToastContainer />
     </div>
   );
 };
